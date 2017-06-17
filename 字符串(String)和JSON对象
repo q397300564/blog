@@ -1,2 +1,102 @@
 ## 字符串与JSON对象
 ###  字符串
+- 定义：
+ - 字符串就是零个或多个排在一起的字符，放在单引号或者双引号之中。
+    'abc'
+    "abc"
+- 简单用法 
+ - 单引号字符转的内部，可以放双引号，双引号的内部可以放单引号。
+     'key="value"'
+     "It\'s a long journey"
+ - 如果一定要在**单引号中加单引号**或**双引号中加双引号**的话也是可以，用转义符就可以\.
+     '你好啊\'疯子\''
+     "你好啊\疯子\""
+ - 字符串默认只能写在一行，分成多行会报错。
+     'a
+     b
+     c'
+     // Uncaught SyntaxError: Invalid or unexpected token
+ - 如果一个字符串必须分成多行的话可以在尾部用反斜杠\。
+      var = longString = '你 \
+      好啊\
+      朋友';
+      console.log(longString);
+      //'你好啊朋友'
+      //注意：在转义符的后面不要有空格，不然就只是转义空格了，而不是回车键了。
+ - 连接字符串（+）可以连接多个单行字符串，将长字符串拆成多行也是可以的，输出不变。
+      var info = '你好'+'朋友，'+'我的名字叫'+'罗丹。';
+      console.log(info);
+      // 你好朋友，我的名字叫罗丹。
+      var info1 = '你好'
+      + '朋友，'
+      + '我的名字叫'
+      + '罗丹';
+       console.log(info1);
+      // 你好朋友，我的名字叫罗丹。
+
+- 转义
+  - 反斜杠(\)在字符串内有特殊含义，用来表示一些特殊字符，所以又称转义符。
+  - 需要用反斜杠转义的特殊字符，主要有下面这些：
+      > \0 null(\u0000)
+      > \b 后退键(\u0008)
+      > \f 换页符(\u000C)
+      > \n 换行符(\u000A)
+      > \r 回车键(\u000D)
+      > \t 制符表(\u0009)
+      > \v 垂直制符表(\u000B)
+      > \' 单引号(\u0027)
+      > \" 双引号(\u0022)
+      > \\ 反斜杠(\u005C)
+- 字符串的操作
+ - 获取字符串的长度 length属性
+      var a = 'hello world';
+      console.log(a.length);
+      // 11
+ - 字符串字母的比较（> >= < <=）按字母一个一个比大小,字母越往后越大。小写字母大于大写字母
+      var a = 'abcde';
+      var b = 'abcef';
+      console.log(a < b); // true
+ - 获取单个字符的在字符串所在位置有2种方式，
+  1. 使用类似于Array的下标操作，索引号从0开始：
+      var a = 'hello world';
+      a[0]; // 'h'
+      a[4]; // 'o'
+      a[5]; // ' '
+      a[13]; // undefined 超出范围的索引不会报错，但返回undefined
+      **注意**：字符串是不可变的，如果对字符串的某个索引赋值，不会有任何错误，但是也没有任何效果。
+   2. 就是用charAt()方法:从字符串中获取单个字符
+      var a = 'hello world';
+      var b = a.charAt(1); // 'e'  
+   
+ - 常用方法（注意：调用这些方法本身不会改变原有字符串的内容，而是返回一个新的字符串）
+   - 大小写
+    - toUpperCase():把一个字符串全部变为大写：
+       var s = 'hello world';
+       var b = s.toUpperCase();
+       console.log(b);// 'HELLO WORLD'
+    - toLowerCase():把一个字符串全部变为小写：
+       var s = 'HELLO WORLD';
+       var b = s.toLowerCase();
+       console.log(b);// 'hello world'
+   - 字符串截取
+    - substr():截取一段字符（第一个是开始位置，第二个是长度）
+       var a = 'hello world';
+       var b = a.substr(1,6);//从索引1开始到，长度为6个索引长  结果：'ello w'
+    - substring():截取一段字符（第一个开始位置，第二个是索引结束位置,结束位置本身是不算的）
+       var a = 'hello world';
+       var b = a.substring(1,4);//从索引1开始，到索引4结束索引4本身不计算在内   结果：'ell'
+    - slice():截取一段字符（与substring一样，只是允许负数）
+     如果参数是负数的话(就用字符串的长度加上负参数)
+       var a = 'hello world';
+       var b = a.slice(1.-1);// 索引1开始，  索引11+（-1）得到10结束，本身不计算在内  结果：'hello worl'
+   - 查找字符在字符串所在位置
+    - search():指定字符串进行匹配搜索，返回第一个出现的匹配项的下标。
+       var a = 'my name is luodan';
+       var b = a.search('is'); //返回 第一个出现的索引  结果为8
+    - replace():被用来在正则表达式和字符串直接比较，然后用新的子串来替换被匹配的子串。
+       var a = 'my name is luodan';
+       var b = a.replace('luodan','luohao'); // 第一个位置是要被替换掉的字符，第二个位置是替换第一个位置字符。  结果 'luohao'
+    - split():将一个String对象分割成字符串数组，通过将字符串分成子串。
+      split();第一个位置指定分割字符串的字符，第二个位置是指定分割成几分。
+      var a = 'my name is luodan';
+      var b = a.split(' ',2);// 结果  ['my','name']
