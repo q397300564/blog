@@ -47,15 +47,11 @@
       > \' 单引号(\u0027)
       > \" 双引号(\u0022)
       > \\ 反斜杠(\u005C)
-- 字符串的操作
+- 字符串的操作和方法（注意：调用这些方法本身不会改变原有字符串的内容，而是返回一个新的字符串）
  - 获取字符串的长度 length属性
       var a = 'hello world';
       console.log(a.length);
       // 11
- - 字符串字母的比较（> >= < <=）按字母一个一个比大小,字母越往后越大。小写字母大于大写字母
-      var a = 'abcde';
-      var b = 'abcef';
-      console.log(a < b); // true
  - 获取单个字符的在字符串所在位置有2种方式，
   1. 使用类似于Array的下标操作，索引号从0开始：
       var a = 'hello world';
@@ -64,31 +60,68 @@
       a[5]; // ' '
       a[13]; // undefined 超出范围的索引不会报错，但返回undefined
       **注意**：字符串是不可变的，如果对字符串的某个索引赋值，不会有任何错误，但是也没有任何效果。
-   2. 就是用charAt()方法:从字符串中获取单个字符
-      var a = 'hello world';
+   2. 就是用charAt()方法:返回指定位置的字符，参数是从0开始编号的位置。
+      var a = new String('hello world');
       var b = a.charAt(1); // 'e'  
-   
- - 常用方法（注意：调用这些方法本身不会改变原有字符串的内容，而是返回一个新的字符串）
-   - 大小写
-    - toUpperCase():把一个字符串全部变为大写：
+      var c = a.charAt(a.length-1); // 'd'
+      这个方法完全可以用array索引的方式代替。
+   3. 就是用charCodeAt()方法：返回给定位置字符的Unicode码点（十进制表示）。
+      'hello world'.charCodeAt(3);//  108
+      如果没有任何参数，charCodeAt(); 返回首字符的Unicode码点。
+      'hello world'.charCodeAt();// 104 
+ - 连接两个字符串
+  - 可以用（+）直接连接
+       console.log('hello'+' '+'world');//  'hello world'
+  - concat()方法：用于连接两个字符串，返回一个新的字符串，不改变原字符串。
+        var a1 = '你好';
+        var b1 = '朋友';
+        a1.concat(b1);//  '你好朋友'
+        console.log(a1);// '你好'
+        如果是多个参数或者不是字符串，先转成字符串在连接
+        var a=1,b=2,c='3';
+        ''.concat(a,b,c);//'123'
+        console.log(a+b+c);// '33'        
+ - 大小写
+  - toUpperCase():把一个字符串全部变为大写：
        var s = 'hello world';
        var b = s.toUpperCase();
        console.log(b);// 'HELLO WORLD'
-    - toLowerCase():把一个字符串全部变为小写：
+  - toLowerCase():把一个字符串全部变为小写：
        var s = 'HELLO WORLD';
        var b = s.toLowerCase();
        console.log(b);// 'hello world'
-   - 字符串截取
-    - substr():截取一段字符（第一个是开始位置，第二个是长度）
-       var a = 'hello world';
-       var b = a.substr(1,6);//从索引1开始到，长度为6个索引长  结果：'ello w'
-    - substring():截取一段字符（第一个开始位置，第二个是索引结束位置,结束位置本身是不算的）
-       var a = 'hello world';
-       var b = a.substring(1,4);//从索引1开始，到索引4结束索引4本身不计算在内   结果：'ell'
-    - slice():截取一段字符（与substring一样，只是允许负数）
-     如果参数是负数的话(就用字符串的长度加上负参数)
-       var a = 'hello world';
-       var b = a.slice(1.-1);// 索引1开始，  索引11+（-1）得到10结束，本身不计算在内  结果：'hello worl'
+  - 字符串截取
+    - substr():用于从原字符串取出字符串并返回，不改变原字符串。
+     （第一个参数是开始位置，第二个参数是长度）
+       'JavaScript'.substr(0,4); 'Java'
+      如果省略第二个参数，则表示字符串一直到字符串的结束。
+       'JavaScript'.substr(3); // 'string'
+      如果第一个参数为负数，表示倒数计算的字符位置。如果第二个参数为负数，将自动转换为0，因此会返回空的字符串。
+       'JavaScript'.substr(-6) // 'Script'
+       'JavaScript'.substr(2,-1); // ''
+    - substring():用于从原字符串取出字符串并返回，不改变原字符串。
+      (第一个参数是开始位置，第二个是参数结束位置(不含该位置)）
+       'substring'.substring(0,3); // 'sub'
+      如果省略第二个参数，则表示字符串一直到字符串的结束。
+       'substring'.substring(3); // 'string'
+      如果第二个参数大于第一个参数，substring()方法会自动更换两个参数的位置。
+       'substring'.substring(9,3);// 'string'
+       //等同于下面的
+       'substring'.substring(3,9)// 'string'
+      如果参数为负数的话，substring()方法会自动将负数转换为0。
+       'substring'.substring(-6); //'substring'
+       'substring'.substring(3,-6); // 'sub' 
+    - slice():用于从原字符串取出字符串并返回，不改变原字符串。
+      (第一个位置是字符串的开始位置，第二个参数是子字符串的结束位置（不含该位置）)
+       'JavaScript'.slice(0,4); // 'Java'
+      如果省略第二个参数，则表示字符串一直到字符串结束的位置。
+        'JavaScript'.slice(4); // 'Script'
+      如果参数是负值，表示字符串长度加上该负值，既该负值的字符串长度。
+        'JavaScript'.slice(-6); // 'Script'
+        'JavaScript'.slice(0,-6);//  'Java'
+        'JavaScript'.slice(-5,-1); // 'crip'
+      如果第一个参数大于第二个参数，slice()方法返回一个空字符串.
+        'JavaScript'.slice(3,1); // ''
    - 查找字符在字符串所在位置
     - search():指定字符串进行匹配搜索，返回第一个出现的匹配项的下标。
        var a = 'my name is luodan';
