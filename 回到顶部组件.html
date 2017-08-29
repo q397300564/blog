@@ -46,7 +46,6 @@
                 position: 'fixed',
                 right: "10px",
                 bottom: "10px",
-                margin: '10px 20px',
                 border: '1px solid #ccc',
                 'font-size': '16px',
                 'text-align': 'right'
@@ -65,7 +64,19 @@
                         $target.slideDown();
                     }else{
                         $target.slideUp();
-                    }
+                    };
+                });
+                
+                $target.on("mouseenter", function(){
+                    $(this).css({
+                        opacity: 0.6
+                    });        
+                });
+
+                $target.on("mouseleave", function(){
+                    $(this).css({
+                        opacity: 1
+                    });
                 });
             },
 
