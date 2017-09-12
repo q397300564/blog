@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Modal组件</title>
+    <style>
+        .dialog .dialog-overlay {
+            width: 100%;
+            height: 100%;
+            opacity: 0.5;
+            background-color: #000;
+
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 100;
+        }
+
+        .dialog .dialog-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 328px;
+            background-color: #eee;
+            border-radius: 5px;
+            font-size: 14px;
+            padding-bottom: 10px;
+            z-index: 101;
+        }
+
+        .dialog .dialog-header {
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #676666;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .dialog .dialog-header h3 {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .dialog .dialog-header .btn-close {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            font-family: fanttasy;
+            cursor: pointer;
+        }
+
+        .dialog .dialog-content {
+            padding: 10px;
+            margin: 12px;
+            color: #666;
+            font-size:11px;
+        }
+
+        .dialog .dialog-footer {
+            text-align: center;
+        }
+
+        .dialog .dialog-footer a.btn {
+            position: relative;
+            text-align: center;
+            background-color: #e33100;
+            display: inline-block;
+            width: 50px;
+            padding: 5px 0 6px;
+            margin: 2px;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 3px;
+        }
+
+        a.btn:hover {
+            background-color: #c33100;
+        }
+    </style>
+</head>
+<body>
+    <button id="open1">打开１</button>
+    <button id="open2">打开２</button>
+    <button id="open3">打开３</button>
+    <button id="open4">打开４</button>
+    <button id="open5">打开５</button>
+    <button id="close">关闭</button>
+
+</body>
+    <script src = 'http://apps.bdimg.com/libs/jquery/1.9.1/jquery.js'></script>
+    <script>
+    var Dialog = (function(){
+        function Modal(){
+            this.createDialog();
+            this.bindEvent();
+        }
+
+        Modal.prototype = {
+            //默认选择
+            DefaultOpts: {
+                //　标题
+                title: '',
+                // 内容
+                message: '',
+                //　判断是否显示关闭按钮
+                isShowCloseBtn: true,
+                //　判断是否显示打开按钮
+                isShowOpenBtn: false,
+                // 关闭的时候做什么
+                onClose: function(){},
+                // 打开的时候做什么
+                onOpen: function(){}
+            },
+
+            // 打开
+            open: function(opts){
+                // 设置它的选择
+                this.setOpts(opts);
+                console.log(this.opts)
+                // 设置它的样式内容
+                this.setDialog();
+                // 显示对象
+                this.showDialog();
+            },
+
+            // 设置它的选择
+            setOpts: function(opts){
+                if(typeof opts === 'string'){
+                    this.opts = $.extend({}, this.DefaultOpts, {message: opts}); // 把两个对象合并成一个新对象
+                }else if(typeof opts === 'object'){
+                    this.opts = $.extend({}, this.DefaultOpts, opts);
+                }
+            },
+
+            // 绑定事件
+            bindEvent: function(){
+                var _this = this;
+                this.$dialog.find('.btn-close').on('click',function(e){
+                    e.preventDefault();
+                    _this.opts.onClose();
+                    _this.hideDialog();
+                });
+                this.$dialog.find('.btn-open').on('click', function(e){
+                    e.preventDefault();
+                    _this.opts.onOpen();
+                    _this.hideDialog();
+                });
+
+                this.$dialog.find('.dialog-overlay').on('click', function(e){
+                    _this.hideDialog();
+                });
+            },
+            
+            // 创建Dialog
+            createDialog: function(){
+                var html = "";
+                    html += '<div class="dialog" style="display: none">';
+                    html +=   '<div class="dialog-overlay">';
+                    html +=   '</div>';
+                    html +=   '<div class="dialog-box">';
+                    html +=     '<div class="dialog-header"><h3></h3><span class="btn-close">x</span></div>';
+                    html +=     '<div class="dialog-content"></div>';
+                    html +=     '<div class="dialog-footer">';
+                    html +=       '<a href="#" class="btn btn-close">关闭</a>';
+                    html +=       '<a href="#" class="btn btn-open">打开</a>';
+                    html +=     '</div>';
+                    html +=   '</div>';
+                    html += '</div>';
+                
+                this.$dialog = $(html);
+                $('body').append(this.$dialog);
+            },
+
+            // 根据参数设置 dialog 的样式和内容
+            setDialog: function(){
+                var $dialog = this.$dialog;
+                if(!this.opts.title){
+                    $dialog.find('.dialog-header').hide();
+                }else{
+                    $dialog.find('.dialog-header').show();
+                };
+
+                if(!this.opts.isShowCloseBtn){
+                    $dialog.find('.dialog-footer .btn-close').hide();
+                }else{
+                    $dialog.find('.dialog-footer .btn-close').show();
+                };
+
+                if(!this.opts.isShowOpenBtn){
+                    $dialog.find('.btn-open').hide();
+                }else{
+                    $dialog.find('.btn-open').show();
+                };
+
+                $dialog.find('.dialog-header h3').text(this.opts.title);
+                $dialog.find('.dialog-content').html(this.opts.message);
+            },
+
+            // 隐藏对象
+            hideDialog: function(){
+                this.$dialog.hide();
+            },
+
+            //　显示对象
+            showDialog: function(){
+                this.$dialog.show();
+            },
+
+            // 关闭
+            close: function(){
+                this.$dialog.hide();
+            }
+
+        };
+        
+        return new Modal();
+    })();
+
+    $('#open1').on('click', function(){
+        Dialog.open('hello, 这里是饥人谷');
+    });
+
+    $('#open2').on('click', function(){
+        Dialog.open('<a href="http://jirengu.com">饥人谷</a>');
+    });
+
+    $('#open3').on('click',function(){
+        Dialog.open({
+            title: '欢迎来到饥人谷',
+            message: 'hello',
+            isShowCloseBtn: true,
+            isShowOpenBtn: true,
+            onClose: function(){
+                alert('close')
+            },
+            onOpen: function(){
+                alert('确定');
+            }
+        });
+    });
+
+    var tpl = '<ul><li>列表1</li><li>列表2</li><li>列表1</li><li>列表1</li></ul>';
+    $('#open4').on('click',function(){
+        Dialog.open({
+            title: '欢迎来到饥人谷',
+            message: tpl,
+            isShowCloseBtn: true,
+            isShowOpenBtn: true,
+            onClose: function(){
+                alert('close')
+            },
+            onOpen: function(){
+                alert('确定');
+            }
+        });
+    });
+
+    $('#open5').on('click',function(){
+        Dialog.open({
+            title: '欢迎来到饥人谷',
+            message: 'hello',
+            isShowCloseBtn: false,
+            isShowOpenBtn: false
+        });
+    });
+
+
+    $('#close').on('click', function(){
+        Dialog.close();
+    });
+    </script>
+</html>

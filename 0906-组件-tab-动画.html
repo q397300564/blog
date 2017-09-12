@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>tab组件-动画效果</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        ul,
+        li {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .clearfix::after {
+            content:'';
+            display: block;
+            clear:both;
+        }
+
+        #layout {
+            width: 1000px;
+            margin: 0 auto;
+        }
+
+        .box {
+            margin-top: 30px;
+            border: 1px solid #ccc;
+        }
+
+        .tabs {
+            margin: 10px 10px 0 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .tabs li {
+            float: left;
+            padding: 20px 30px;
+            cursor: pointer;
+        }
+
+        .tabs li.hover {
+            position: relative;
+            top: 1px;
+            border: 1px solid #ccc;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .tabs li.hover:nth-child(1) {
+            background-color: orange;
+            border-bottom: 1px solid orange;
+        }
+
+        .tabs li.hover:nth-child(2) {
+            background-color: greenyellow;
+            border-bottom: 1px solid reenyellow;
+        }
+
+        .tabs li.hover:nth-child(3) {
+            background-color: blue;
+            border-bottom: 1px solid blue;
+        }
+
+        .tabs li.hover:nth-child(4) {
+            background-color: red;
+            border-bottom: 1px solid red;
+        }
+
+        .window {
+            position: relative;
+            width: 1000px;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .contents {
+            position: absolute;
+        }
+
+        .contents li {
+            float: left;
+            width: 1000px;
+            height: 200px;
+            line-height: 200px;
+            text-align: center;
+        }
+
+        .contents li:nth-child(1) {
+            background-color: orange;
+        }
+
+        .contents li:nth-child(2) {
+            background-color: greenyellow;
+        }
+
+        .contents li:nth-child(3) {
+            background-color: blue;
+        }
+
+        .contents li:nth-child(4) {
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+     <div id="layout">
+        <div class="box">
+            <ul class="tabs clearfix">
+                <li class="hover">tab1</li>
+                <li>tab2</li>
+                <li>tab3</li>
+                <li>tab4</li>
+            </ul>
+            <div class="window">
+                <ul class="contents clearfix">
+                    <li>content1</li>
+                    <li>content2</li>
+                    <li>content3</li>
+                    <li>content4</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="box">
+            <ul class="tabs clearfix">
+                <li class="hover">tab1</li>
+                <li>tab2</li>
+                <li>tab3</li>
+                <li>tab4</li>
+            </ul>
+            <div class="window">
+                <ul class="contents clearfix">
+                    <li>content1</li>
+                    <li>content2</li>
+                    <li>content3</li>
+                    <li>content4</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script src = 'http://apps.bdimg.com/libs/jquery/1.9.1/jquery.js'></script>
+    <script>
+        
+
+        // var p1 = new Tab($('.box').eq(0));
+        // var p2 = new Tab($('.box').eq(1));
+
+        var Tab_ = (function(){
+            function Tab($ct){
+                this.$ct = $ct;
+                this.init();
+                this.bind();
+            };
+
+            Tab.prototype = {
+                init: function(){
+                    this.$tabLis = this.$ct.find('.tabs li');
+                    this.$tabPanels = this.$ct.find('.contents li');
+                    this.$Ct = this.$ct.find('.window>.contents'); // 所有内容节点
+                    this.$ctLi = this.$ct.find('.contents>li');　// 一个内容个节点
+                    this.$ctLiWidth = this.$ctLi.width(); // 一个内容节点宽度
+                    this.pageIndex = 0;　// 索引
+                    this.isScroll = false; //(判断是否滚动)
+                    this.quantity = this.$ctLi.length; // 内容节点的数量
+                },  
+
+                bind: function(){
+                    var _this = this;
+                    this.$tabLis.click(function(){
+                        var index = $(this).index();
+                        _this.$tabLis.removeClass('hover')  // 在圆点节点上 删除 所有的 hover 的class
+                                    .eq(index)    // 选中索引
+                                    .addClass('hover');  // 在索引所指的节点上添加 hover 的class
+
+                        if(index > _this.pageIndex){
+                            _this.playDown(index - _this.pageIndex);
+                        };
+                        if(index < _this.pageIndex){
+                            _this.playUp(_this.pageIndex - index);
+                        };
+                    }); 
+                },
+
+                playUp: function(len){
+                    var _this = this;
+                    if(this.isScroll){
+                        return;   // 锁 （页面还在滚动就不执行）
+                    };
+                    this.isScroll = true; // （页面正在滚动）
+                    this.$Ct.animate({
+                        left: "+=" + len*this.$ctLiWidth
+                    },function(){
+                        _this.pageIndex -= len;
+                        if(_this.pageIndex === -1){
+                            _this.pageIndex = 3;
+                            _this.$Ct.css({
+                                left: _this.$ctLiWidth
+                            });
+                        }
+                        _this.isScroll = false;
+                    });
+                    
+                },
+
+                playDown: function(len){
+                    var _this = this;
+                    if(this.isScroll){
+                        return;
+                    };
+                    this.isScroll = true;
+                    this.$Ct.animate({
+                        left: '-=' + len*this.$ctLiWidth
+                    }, function(){
+                        _this.pageIndex += len;
+                        if(_this.pageIndex === _this.quantity){
+                            _this.pageIndex = 0;
+                            _this.$Ct.css({
+                                left: - _this.$ctLiWidth
+                            });
+                        };
+                        _this.isScroll = false;
+                    });
+                },
+            };
+
+            return {
+                init: function(node){
+                    $(node).each(function(idx, node){
+                        new Tab($(node));
+                    });
+                }
+            };
+        })()
+
+        Tab_.init('.box');
+    </script>   
+</body>
+</html>
